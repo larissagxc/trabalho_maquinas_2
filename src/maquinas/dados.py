@@ -6,7 +6,7 @@ class Dados:
     """Classe abstrata para lidar com leitura e escrita de arquivos"""
 
     @staticmethod
-    def ler_dados(nome_arquivo : str, separador: str = ":") -> Dict:
+    def ler_dados(nome_arquivo : str, separador: str = ",") -> Dict:
         if not os.path.isfile(nome_arquivo):
             print (f"Arquivo '{nome_arquivo}' Não existe sob {os.getcwd()}. Retornando dicionário com parâmetros padrão")
         else:
