@@ -31,10 +31,12 @@ class MotorCCShunt:
     torque_carga = 0
     "Torque de carga:                      $entre 8 e 15 N\cdot m $"
 
-    def __init__(self, dados):
-        print(f"Objeto {self.__class__.__name__} criado... Parâmetros:")
-        for chave, valor in dados.items():
-            print(f"\t {chave} : \t {valor}")
+    def __init__(self, dados: Dict, verboso: bool = False):
+        print(f"Objeto {self.__class__.__name__} criado...")
+        if verboso:
+            for chave, valor in dados.items():
+                print(f"\t {chave:10} = {valor}")
+
         self.transforma_dados(dados)
 
     def transforma_dados(self, dados: Dict) -> None:
@@ -80,18 +82,63 @@ class MotorCCShunt:
     def calcula_corrente_armadura(self) -> float:
         if self.calcula_fluxo_tensao == 0: return 0
         if self.torque_carga == 0:
-            self.torque_carga == self.calcula_torque()
+            self.torque_carga = self.calcula_torque()
         return self.torque_carga / (self.kt * self.calcula_fluxo_tensao())
 
-    # def calcula_velocidade(self) -> Tuple[float, float]:
-    #     if self.calcula_fluxo_tensao() == 0 or self.ke == 0:
-    #         return 0, 0
-    #     omega_rad_s = fem / (Ke * fluxo)
-    #     return omega_rad_s, velocidade_rpm
+    def calcula_velocidade(self) -> float:
+        if self.calcula_fluxo_tensao() == 0 or self.ke == 0:
+            return 0, 0
+        return self.calcula_fem() / (self.ke * self.calcula_fluxo_tensao())
 
-    # def calcula_potencias(self) -> Tuple[float, float, float]:
-    #     p_mecanica = self.tl * w # Potência de saída ou potência mecânica disponível no eixo
-    #     p_eletrica = self.ua * (self.ia + If) # Potência de entrada ou potência elétrica fornecida à máquina.
-    #     rendimento = (p_mecanica/p_eletrica) * 100
-    #     return p_mecanica, p_eletrica, rendimento
+    def calcula_potencias(self) -> Tuple[float, float, float]:
+        p_mecanica = self.torque_carga * self.calcula_w_rads() # Potência de saída ou potência mecânica disponível no eixo
+        p_eletrica = self.ua * (self.ia + self.calcula_corrente_campo()) # Potência de entrada ou potência elétrica fornecida à máquina.
+        rendimento = (p_mecanica/p_eletrica) * 100
+        return p_mecanica, p_eletrica, rendimento
+    
+    def calcular_resultados(self) -> Dict:
+        """
+        Chama todas as funções de cálculo e atribui resultados à um dicionário
+        """
+        resultados = {}
+
+        resultados["fem"]               = self.calcula_fem()
+        resultados["w_rads"]            = self.calcula_w_rads()
+        resultados["torque"]            = self.calcula_torque()
+        resultados["fluxo_tensao"]      = self.calcula_fluxo_tensao()
+        resultados["fluxo_torque"]      = self.calcula_fluxo_torque()
+        resultados["const_magnetica"]   = self.calcula_const_magnetica()
+        resultados["corrente_campo"]    = self.calcula_corrente_campo()
+        resultados["corrente_armadura"] = self.calcula_corrente_armadura() 
+        resultados["velocidade"]        = self.calcula_velocidade()
+        resultados["potencia_mecânica"] = self.calcula_potencias()[0]
+        resultados["potencia_elétrica"] = self.calcula_potencias()[1]
+        resultados["rendimento"]        = self.calcula_potencias()[2]
+
+        return resultados
+
+    def mostrar_resultados(self) -> None:
+        """
+        Mostra os parâmetros e os resultados resultados
+        """
+        print("====="*5, "Parâmetros", "====="*5)
+        print(f"Uan   = {self.ua:20}")
+        print(f"Ian   = {self.ia:20}")
+        print(f"Ra    = {self.ra:20}")
+        print(f"Rf    = {self.rf:20}")
+        print(f"Rreos = {self.r_reos:20}")
+        print(f"Ke    = {self.ke:20}")
+        print(f"Kt    = {self.kt:20}")
+        print(f"J     = {self.iner:20}")
+        print(f"RPM   = {self.rpm:20}")
+        print(f"Pn    = {self.pn:20}")
+        print(f"n     = {self.n:20}")
+        print(f"T_L   = {self.torque_carga:20}",   )
+        
+        print(f"====="*5, "Resultados", "====="*5)
+        resultados = self.calcular_resultados()
+        for chave, valor in resultados.items():
+            print(f"{chave:20} = {valor:.4f}")
+
+
 
