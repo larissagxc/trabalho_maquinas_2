@@ -44,7 +44,8 @@ class MotorCCShunt:
         Recebe dicionário com dados de entrada e transforma em valores adequados para cálculos
         """
         self.ua            = float(dados['Uan'])
-        self.ia            = float(dados['Ian'])
+        # self.ia            = float(dados['Ian'])
+        self.ia            = 10.2549
         self.ra            = float(dados['Ra'])
         self.rf            = float(dados['Rf'])
         self.r_reos        = 0 # float(dados['Rreos'])
@@ -71,8 +72,11 @@ class MotorCCShunt:
     def calcula_fluxo_tensao(self) -> float: 
         return self.calcula_fem() / (self.ke * self.calcula_w_rads())
 
+    def calcula_torque_fluxo(self) -> float:
+        return self.kt * self.calcula_fluxo_tensao() * self.ia
+
     def calcula_fluxo_torque(self) -> float:
-        return self.calcula_torque() / (self.kt * self.ia)
+       return self.calcula_torque() / (self.kt * self.ia)
 
     def calcula_const_magnetica(self) -> float:
         # O trabalho proposto adota a relação linear entre fluxo magnético e corrente de campo, 
@@ -82,7 +86,7 @@ class MotorCCShunt:
     def calcula_corrente_armadura(self) -> float:
         if self.calcula_fluxo_tensao == 0: return 0
         if self.torque_carga == 0:
-            self.torque_carga = self.calcula_torque()
+            self.torque_carga = self.calcula_torque_fluxo()
         return self.torque_carga / (self.kt * self.calcula_fluxo_tensao())
 
     def calcula_velocidade(self) -> float:
@@ -91,6 +95,8 @@ class MotorCCShunt:
         return self.calcula_fem() / (self.ke * self.calcula_fluxo_tensao())
 
     def calcula_potencias(self) -> Tuple[float, float, float]:
+        if self.torque_carga == 0:
+            self.torque_carga = self.calcula_torque_fluxo()
         p_mecanica = self.torque_carga * self.calcula_w_rads() # Potência de saída ou potência mecânica disponível no eixo
         p_eletrica = self.ua * (self.ia + self.calcula_corrente_campo()) # Potência de entrada ou potência elétrica fornecida à máquina.
         rendimento = (p_mecanica/p_eletrica) * 100
