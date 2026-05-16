@@ -7,29 +7,29 @@ class MotorCCShunt:
     """
 
     ua = 0 
-    "Tensão de armadura nominal:           $240 V $"
+    r"Tensão de armadura nominal:           $240 V $"
     ia = 0 
-    "Corrente nominal de armadura:         $10 A $"
+    r"Corrente nominal de armadura:         $10 A $"
     ra = 0
-    "Resistência de armadura (Ra):         $2 \Omega$ "
+    r"Resistência de armadura (Ra):         $2 \Omega$ "
     rf = 0
-    "Resistência de campo (Rf ):           $120 \Omega $ "
+    r"Resistência de campo (Rf ):           $120 \Omega $ "
     r_reos = 0
-    "Reostato de campo:                    $0 a 100 \Omega $"
+    r"Reostato de campo:                    $0 a 100 \Omega $"
     ke = 0
-    "Constantes eletromecânica (Ke):       $0.8 $"
+    r"Constantes eletromecânica (Ke):       $0.8 $"
     kt = 0
-    "Constantes eletromecânica (Kt):       $0.8 $"
+    r"Constantes eletromecânica (Kt):       $0.8 $"
     iner = 0
-    "Momento de inércia total:             $0.02 kg \cdot m^2$"
+    r"Momento de inércia total:             $0.02 kg \cdot m^2$"
     rpm = 0
-    "Velocidade nominal:                   $1800 rpm $ "
+    r"Velocidade nominal:                   $1800 rpm $ "
     pn = 0
-    "Potência nominal:                     $2,5 kW $"
+    r"Potência nominal:                     $2,5 kW $"
     n = 0
-    "Rendimento:                           $85\% $"
+    r"Rendimento:                           $85\% $"
     torque_carga = 0
-    "Torque de carga:                      $entre 8 e 15 N\cdot m $"
+    r"Torque de carga:                      $entre 8 e 15 N\cdot m $"
 
     def __init__(self, dados: Dict, verboso: bool = False):
         print(f"Objeto {self.__class__.__name__} criado...")
@@ -91,7 +91,7 @@ class MotorCCShunt:
 
     def calcula_velocidade(self) -> float:
         if self.calcula_fluxo_tensao() == 0 or self.ke == 0:
-            return 0, 0
+            return 0
         return self.calcula_fem() / (self.ke * self.calcula_fluxo_tensao())
 
     def calcula_potencias(self) -> Tuple[float, float, float]:
