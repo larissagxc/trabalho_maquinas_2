@@ -52,7 +52,7 @@ class MotorCCShunt:
         self.kt            = float(dados['Kt'])
         self.iner          = float(dados['J'])
         self.rpm           = float(dados['RPM'])
-        self.pn            = float(dados['Pn'])
+        self.pn            = float(dados['Pn']) * 1000
         self.n             = float(dados['n'])
         self.torque_carga  = 0 # float(dados['T_L'])
     
@@ -63,7 +63,7 @@ class MotorCCShunt:
         return self.rpm * (2 * np.pi / 60)
 
     def calcula_torque(self) -> float:
-        return (self.calcula_fem() * self.ia) / self.calcula_w_rads()
+        return self.pn / self.calcula_w_rads()
         
     def calcula_corrente_campo(self) -> float:
         return self.ua / (self.rf + self.r_reos)
