@@ -1,0 +1,13 @@
+# Grandeza, valor, unidade, descrição
+vn_a,       240,         V, Tensão de armadura nominal
+in_a,       10,          A, Corrente nominal de armadura
+ra,         2,         OHM, Resistência de armadura (Ra)
+rf,         120,       OHM, Resistência de campo (Rf )
+reos,       0-100,     OHM, Reostato de campo
+ke,         0.8,         -, Constantes eletromecânicas (Ke, Kt)
+kt,         0.8,         -, Constantes eletromecânicas (Ke, Kt)
+iner,       0.02,   kg*m^2, Momento de inércia total
+wn,         1800,      rpm, Velocidade nominal
+pn,         2.5,        kW, Potência nominal
+n,          85,          %, Rendimento
+torq,       8-15,      N*m, Torque de carga
